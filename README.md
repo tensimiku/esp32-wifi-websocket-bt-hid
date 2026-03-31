@@ -4,6 +4,8 @@ A secure, composite BLE HID device (Keyboard + Mouse) for ESP32-C3, controlled v
 
 > Open `https://<ESP32_IP>` on any browser (PC or mobile), type or drag on the virtual trackpad, and the ESP32 injects HID events over Bluetooth to a paired device.
 
+![Web Interface](web.png)
+
 ## Features
 
 | Feature | Details |
@@ -109,7 +111,3 @@ All messages use the format: `password|type|data`
 - **Single Composite Report Map**: Keyboard and Mouse descriptors are merged into one `compositeReportMap[]` array. This is required for Android compatibility — Android ignores secondary GATT Report Map characteristics.
 - **Sub-pixel Accumulation**: The trackpad JS uses `lx += dx` (not `lx = e.clientX`) to prevent High-DPI sub-pixel coordinate decay.
 - **Modifier Bitmask**: Standard USB HID modifier bits (L-Ctrl=0x01, L-Shift=0x02, L-Alt=0x04, L-GUI=0x08, R-Ctrl=0x10, R-Shift=0x20, R-Alt=0x40).
-
-## License
-
-Based on Espressif Systems example code. See [SPDX license header](main/esp_hid_device_main.c) for details.
