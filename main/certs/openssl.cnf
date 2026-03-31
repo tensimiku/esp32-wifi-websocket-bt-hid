@@ -1,0 +1,9 @@
+[req]
+distinguished_name = req_distinguished_name
+prompt = no
+[req_distinguished_name]
+C = KR
+ST = Seoul
+L = Seoul
+O = tsmk
+CN = esp32.local
