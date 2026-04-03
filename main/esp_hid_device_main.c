@@ -12,6 +12,7 @@
 #include "esp_bt.h"
 #include "esp_event.h"
 #include "esp_log.h"
+#include "esp_netif.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
@@ -19,10 +20,19 @@
 #include "freertos/task.h"
 #include "nvs_flash.h"
 
+
 #if CONFIG_BT_NIMBLE_ENABLED
 #include "host/ble_hs.h"
+#include "host/util/util.h"
 #include "nimble/nimble_port.h"
 #include "nimble/nimble_port_freertos.h"
+#include "services/gap/ble_svc_gap.h"
+#include "services/gatt/ble_svc_gatt.h"
+#include "store/config/ble_store_config.h"
+#include "store/ram/ble_store_ram.h"
+
+void ble_store_config_init(void);
+
 #else
 #include "esp_bt_defs.h"
 #if CONFIG_BT_BLE_ENABLED
@@ -889,10 +899,8 @@ void ble_hid_device_host_task(void *param) {
   ESP_LOGI(TAG, "BLE Host Task Started");
   /* This function will return only when nimble_port_stop() is executed */
   nimble_port_run();
-
   nimble_port_freertos_deinit();
 }
-void ble_store_config_init(void);
 #endif
 
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
