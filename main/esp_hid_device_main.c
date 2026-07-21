@@ -20,7 +20,6 @@
 #include "freertos/task.h"
 #include "nvs_flash.h"
 
-
 #if CONFIG_BT_NIMBLE_ENABLED
 #include "host/ble_hs.h"
 #include "host/util/util.h"
@@ -393,19 +392,19 @@ static void char_to_code(uint8_t *buffer, char ch) {
 }
 
 void send_keyboard(uint8_t mods, char c) {
-  static uint8_t buffer[8] = {0};
-  memset(buffer, 0, 8);
+  static uint8_t buffer[7] = {0};
+  memset(buffer, 0, 7);
   if (c != 0) {
     char_to_code(buffer, c);
   } else {
     buffer[2] = 0;
   }
   buffer[0] |= mods;
-  esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 8);
+  esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 7);
   if (c != 0 || mods == 0) {
     vTaskDelay(50 / portTICK_PERIOD_MS);
-    memset(buffer, 0, 8);
-    esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 8);
+    memset(buffer, 0, 7);
+    esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 7);
   }
 }
 
@@ -1136,14 +1135,14 @@ static esp_err_t ws_handler(httpd_req_t *req) {
           } else if (type == 'R') {
             int mods = 0, hid = 0;
             if (sscanf(data, "%d|%d", &mods, &hid) == 2) {
-              uint8_t buffer[8] = {0};
+              uint8_t buffer[7] = {0};
               buffer[0] = (uint8_t)mods;
               buffer[2] = (uint8_t)hid;
               ESP_LOGI(TAG, "Raw Key Mod: %d, HID: %d", mods, hid);
-              esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 8);
+              esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 7);
               vTaskDelay(50 / portTICK_PERIOD_MS);
-              memset(buffer, 0, 8);
-              esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 8);
+              memset(buffer, 0, 7);
+              esp_hidd_dev_input_set(s_ble_hid_param.hid_dev, 0, 1, buffer, 7);
             }
           } else if (type == 'T') {
             int mods = atoi(data);
@@ -1266,7 +1265,7 @@ void app_main(void) {
   ESP_LOGI(TAG, "setting cod major, peripheral");
   esp_bt_cod_t cod = {0};
   cod.major = ESP_BT_COD_MAJOR_DEV_PERIPHERAL;
-  cod.minor = ESP_BT_COD_MINOR_PERIPHERAL_POINTING;
+  cod.minor = ESP_BT_COD_MINOR_PERIPHERAL_KEYBOARD_AND_POINTING;
   esp_bt_gap_set_cod(cod, ESP_BT_SET_COD_MAJOR_MINOR);
   vTaskDelay(1000 / portTICK_PERIOD_MS);
   ESP_LOGI(TAG, "setting bt device");
